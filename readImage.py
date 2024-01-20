@@ -27,5 +27,5 @@ def readPixel(path, pixel):
 def calcGrayscale(i):
     return i/255
 
-imagePath = "image.jpg"
-print(imgPxList(imagePath))
+#imagePath = "image.jpg"
+#print(imgPxList(imagePath))

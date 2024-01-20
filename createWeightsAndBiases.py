@@ -1,5 +1,7 @@
 import pickle
 import os
+import random
+import mathFunctions
 
 inputLayer = 784
 hiddenLayers = {
@@ -23,13 +25,21 @@ def setWeightsAndBiases(inputLayer, hiddenLayers):
             weightsAndBiases[layerKey][neuron]["bias"] = 0
             weightsAndBiases[layerKey][neuron]["weights"] = []
             if layerKey == 1:
+                    # Define weight range with Xavier Weight Initialization
+                weightRange = mathFunctions.XavierWeightInitialization(inputLayer)
                     # Create the weights for all the connected input neurons of this neuron
                 for _ in range(inputLayer):
-                    weightsAndBiases[layerKey][neuron]["weights"].append(0.5)
+                    # Create random weight within given weight range
+                    weight = random.uniform(weightRange["min"], weightRange["max"])
+                    weightsAndBiases[layerKey][neuron]["weights"].append(weight)
             else:
+                # Define weight range with Xavier Weight Initialization
+                weightRange = mathFunctions.XavierWeightInitialization(hiddenLayers[layerKey - 1])
                     # Create the weights for all the connected neurons of this neuron
                 for _ in range(hiddenLayers[layerKey - 1]):
-                    weightsAndBiases[layerKey][neuron]["weights"].append(0.5)
+                    # Create random weight within given weight range
+                    weight = random.uniform(weightRange["min"], weightRange["max"])
+                    weightsAndBiases[layerKey][neuron]["weights"].append(weight)
     return weightsAndBiases
 
 def createWeightsAndBiasesFile(inputLayer, hiddenLayers, file):
@@ -49,5 +59,6 @@ def returnFileData(file):
         # deserialize using load()
         data = pickle.load(f)
         return data
-    
-print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))
+
+#print(returnFileData(file))    
+#print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))
