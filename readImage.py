@@ -1,28 +1,30 @@
 # Importing Image from PIL package 
 from PIL import Image
 
+# Create a list whith the grayscale of each pixel of an image
 def imgPxList(path):
     pxList = []
-    for x in range(28):
-        for y in range(28):
-            pixel = {
-                "x": x,
-                "y": y
-            }
+    img = Image.open(path)
+    # Loops through each pixel of an image
+    for x in range(img.width):
+        for y in range(img.height):
+            pixel = {"x": x, "y": y}
             pxValue = readPixel(path, pixel)
-            grayScalePx = calcGrayScale(pxValue)
+            grayScalePx = calcGrayscale(pxValue)
             pxList.append(grayScalePx)
     return pxList
 
-
 def readPixel(path, pixel):
-    # creating a image object
+    # Creating an image object
     img = Image.open(path)
-    if img.width >= pixel["x"] and img.height >= pixel["y"]:
-        px = img.load()
-        return (px[pixel["x"], pixel["y"]])
+    # Convert multi layer images into single layer images
+    grayscaleImage = img.convert(mode="L")
+    px = grayscaleImage.load()
+    # Returns the pixel value
+    return (px[pixel["x"], pixel["y"]])
 
-def calcGrayScale(i):
+# Converts a 0 to 255 scale into a 0 to 1 scale
+def calcGrayscale(i):
     return i/255
 
 imagePath = "image.jpg"
