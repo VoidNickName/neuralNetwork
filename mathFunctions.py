@@ -16,3 +16,6 @@ def XavierWeightInitialization(n):
         "max": (1/math.sqrt(n))
     }
     return weightRange
+
+def changeWeightOrBias(currentEstimate, constant, gradient):
+    return (currentEstimate - constant * gradient)
