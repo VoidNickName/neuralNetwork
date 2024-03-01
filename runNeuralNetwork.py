@@ -6,6 +6,7 @@ def runNeuralNetwork(weightsAndBiases, imgPixelList):
 
 def runNeuralNetwork(weightsAndBiases, imgPixelList):
     valueNeurons = {}
+    valueNeurons[0] = imgPixelList
     # Loop through layers
     for layerKey, layer in weightsAndBiases.items():
         valueNeurons[layerKey] = {}

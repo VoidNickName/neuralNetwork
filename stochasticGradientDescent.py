@@ -4,11 +4,13 @@ import readImage
 from runNeuralNetwork import runNeuralNetwork
 
 file = "weightsAndBiases.pkl"
+#trainingListLenght = 42000
+trainingListLenght = 1
 # Retreve weights and biases from file
 weightsAndBiases = createWeightsAndBiases.returnFileData(file)
 
 def main(weightsAndBiases):
-    trainingList = list(range(42000))
+    trainingList = list(range(trainingListLenght))
     random.shuffle(trainingList)
 
     for i in trainingList:
@@ -27,7 +29,8 @@ def sgd(weightsAndBiases, number, index):
     # Get list of pixel values from image
     imgPixelList = readImage.imgPxList(imagePath)
 
-    #valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
-    print(runNeuralNetwork(weightsAndBiases, imgPixelList))
+    valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
+    revValueNeurons = dict(reversed(list(valueNeurons.items())))
+    print(valueNeurons)
 
 main(weightsAndBiases)
