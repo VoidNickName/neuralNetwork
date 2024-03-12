@@ -12,7 +12,7 @@ imgPixelList = readImage.imgPxList(imagePath)
 
 valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
 
-output = (valueNeurons[len(valueNeurons)])
+output = (valueNeurons[len(valueNeurons) - 1])
 print(output)
 # Get the neuron with the highest value
 Keymax = max(zip(output.values(), output.keys()))[1]

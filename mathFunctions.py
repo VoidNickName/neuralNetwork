@@ -5,6 +5,9 @@ def sigmoidFunction(x):
     x = float(x)
     return (1 / (1 + (math.e ** (-x))))
 
+def derivativeSigmoidFunction(x):
+    return sigmoidFunction(x) * (1 - sigmoidFunction(x))
+
 #number = -100
 #print(sigmoidFunction(number))
 

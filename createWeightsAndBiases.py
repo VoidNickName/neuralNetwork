@@ -59,6 +59,18 @@ def returnFileData(file):
         # deserialize using load()
         data = pickle.load(f)
         return data
+    
+def alterFileData(file, newData):
+    if os.path.isfile(file) == True:
+        # open a file
+        with open(file, 'wb') as f:
+            # serialize the weights and biases to the file
+            pickle.dump(newData, f)
+            f.close()
+        return True
+    else:
+        return False
+
 
 #print(returnFileData(file))    
 #print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))
