@@ -9,7 +9,7 @@ trainingListLenght = 42000
 #trainingListLenght = 1
 # Retreve weights and biases from file
 weightsAndBiases = createWeightsAndBiases.returnFileData(file)
-learningRate = 0.01
+learningRate = 0.00001
 
 def main(weightsAndBiases):
     trainingList = list(range(trainingListLenght))
@@ -55,7 +55,7 @@ def calcGradient(weightsAndBiases, number, index):
                 if outputKey not in biasGradient[layer]:
                     biasGradient[layer][outputKey] = 0
 
-                desiredOutput = calcDesiredOutput(outputKey - 1, number)
+                desiredOutput = calcDesiredOutput(outputKey, number)
                 biasGradient[layer][outputKey] += biasDerivativeWithCost(output, desiredOutput)
 
                 for nKey, n in valueNeurons[len(valueNeurons) - 2].items():
