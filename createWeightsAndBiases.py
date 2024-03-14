@@ -73,4 +73,4 @@ def alterFileData(file, newData):
 
 
 #print(returnFileData(file))    
-print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))
+#print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))
