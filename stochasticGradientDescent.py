@@ -73,7 +73,6 @@ def calcGradient(weightsAndBiases, number, index):
                 if outputKey not in biasGradient[layer]:
                     biasGradient[layer][outputKey] = 0
 
-                desiredOutput = calcDesiredOutput(outputKey, number)
                 activation = activationGradient[layer - 1][outputKey]
 
                 biasGradient[layer][outputKey] += biasDerivative(activation, output)
@@ -121,6 +120,7 @@ def applyGradient(weightGradient, biasGradient, weightsAndBiases, learningRate):
             i = 0
             for weight in neuron["weights"]:
                 weight = mathFunctions.changeWeightOrBias(weight, learningRate, weightGradient[len(weightGradient) - layerKey][neuronKey][i])
+                # doesn't work
                 i += 1
     return weightsAndBiases
 
