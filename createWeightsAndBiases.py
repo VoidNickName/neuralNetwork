@@ -11,9 +11,11 @@ hiddenLayers = {
     3: 10
 }
 
-file = "weightsAndBiases.pkl"
+#file = "weightsAndBiases.pkl"
+file = "imgList.pkl"
 weightsAndBiases = {}
-# Create a nested dictionarie with the weights and baises
+
+# Create a nested dictionarie with the weights and biases
 def setWeightsAndBiases(inputLayer, hiddenLayers):
         # Loop through the layers in the neuralnetwork
     for layerKey, neurons in hiddenLayers.items():
@@ -46,7 +48,7 @@ def createWeightsAndBiasesFile(inputLayer, hiddenLayers, file):
     if os.path.isfile(file) == False:
         # open a file
         with open(file, 'wb') as f:
-            setWeightsAndBiases(inputLayer, hiddenLayers)
+            weightsAndBiases = setWeightsAndBiases(inputLayer, hiddenLayers)
             # serialize the weights and biases to the file
             pickle.dump(weightsAndBiases, f)
             f.close()

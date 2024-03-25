@@ -6,11 +6,7 @@ def sigmoidFunction(x):
     return (1 / (1 + (math.e ** (-x))))
 
 def derivativeSigmoidFunction(x):
-    return sigmoidFunction(x) * (1 - sigmoidFunction(x))
-
-#number = -100
-#print(sigmoidFunction(number))
-
+    return x * (1 - x)
 
 # Xavier Weight Initialization
 def XavierWeightInitialization(n):
@@ -19,6 +15,18 @@ def XavierWeightInitialization(n):
         "max": (1/math.sqrt(n))
     }
     return weightRange
+
+def calcCostDerivative(output, desiredOutput):
+    return 2 * (output - desiredOutput)
+
+def calcDelta(x, output):
+    return x * derivativeSigmoidFunction(output)
+
+def weightDerivative(delta, n):
+    return delta * n
+
+def activationDerivative(delta, weight):
+    return delta * weight
 
 def changeWeightOrBias(currentEstimate, constant, gradient):
     return (currentEstimate - (constant * gradient))

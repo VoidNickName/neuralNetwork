@@ -3,12 +3,14 @@ import readImage
 from runNeuralNetwork import runNeuralNetwork
 
 file = "weightsAndBiases.pkl"
+#file = "tinyWeightsAndBiases.pkl"
 imagePath = "testSet\img_1.jpg"
 
 # Retreve weights and biases from file
 weightsAndBiases = createWeightsAndBiases.returnFileData(file)
 # Get list of pixel values from image
 imgPixelList = readImage.imgPxList(imagePath)
+#imgPixelList = [0, 1]
 
 valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
 
