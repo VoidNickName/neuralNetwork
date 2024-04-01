@@ -4,7 +4,7 @@ from runNeuralNetwork import runNeuralNetwork
 
 file = "weightsAndBiases.pkl"
 #file = "tinyWeightsAndBiases.pkl"
-imagePath = "testSet\img_1.jpg"
+imagePath = "testSet\img_2.jpg"
 
 # Retreve weights and biases from file
 weightsAndBiases = createWeightsAndBiases.returnFileData(file)

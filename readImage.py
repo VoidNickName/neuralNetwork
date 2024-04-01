@@ -29,24 +29,43 @@ def readPixel(path, pixel):
 def calcGrayscale(i):
     return i/255
 
-def createImgList(path):
-    if os.path.isfile(path) == False:
+def createImgList(path, testSize):
+    testSize = int(1 / testSize)
+    testFileImgList = "test" + str(path.capitalize())
+    if os.path.isfile(path) == False or os.path.isfile(testFileImgList) == False:
+        t = 0
         i = 0
+        j = 0
         imgList = {}
+        testImgList = {}
         for directory in os.listdir("trainingSet"):
 
             for file in os.listdir("trainingSet/" + directory):
-                imgList[i] = {}
-                filePath = "trainingSet/" + directory + "/" + file
-                imgList[i]["number"] = directory
-                imgList[i]["pixelList"] = imgPxList(filePath)
-                i += 1
-                if i % 100 == 0:
-                    print(i)
+                if t % testSize != 0:
+                    imgList[i] = {}
+                    filePath = "trainingSet/" + directory + "/" + file
+                    imgList[i]["number"] = directory
+                    imgList[i]["pixelList"] = imgPxList(filePath)
+                    i += 1
+                elif t % testSize == 0:
+                    testImgList[j] = {}
+                    filePath = "trainingSet/" + directory + "/" + file
+                    testImgList[j]["number"] = directory
+                    testImgList[j]["pixelList"] = imgPxList(filePath)
+                    j += 1
+
+                t += 1
+                if (t) % 100 == 0:
+                        print(t)
 
         with open(path, 'wb') as f:
             # serialize the pixel list to the file
             pickle.dump(imgList, f)
+            f.close()
+
+        with open(testFileImgList, 'wb') as f:
+            # serialize the pixel list to the file
+            pickle.dump(testImgList, f)
             f.close()
 
 def createTinyImgList(path):

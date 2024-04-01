@@ -3,11 +3,16 @@ import createWeightsAndBiases
 import readImage
 import mathFunctions
 from runNeuralNetwork import runNeuralNetwork
+import matplotlib.pyplot as plt
+import numpy as np
 
 fileWeightsAndBiases = "weightsAndBiases.pkl"
 fileImgList = "imgList.pkl"
+testFileImgList = "test" + str(fileImgList.capitalize())
+costList = "costList.pkl"
 
-learningRate = 0.9
+learningRate = 0.1
+testSize = 0.20
 
 inputLayer = 784
 hiddenLayers = {
@@ -31,12 +36,32 @@ def main(weightsAndBiases):
     try:
         trainingList = createWeightsAndBiases.returnFileData(fileImgList)
     except FileNotFoundError:
-        trainingList = readImage.createImgList(fileImgList)
+        readImage.createImgList(fileImgList, testSize)
+        trainingList = createWeightsAndBiases.returnFileData(fileImgList)
     
     # Create a list for the order of the training images
     trainingListOrder = (list(range(len(trainingList))))
     # Shuffle the training list
     random.shuffle(trainingListOrder)
+
+    try:
+        testList = createWeightsAndBiases.returnFileData(testFileImgList)
+    except FileNotFoundError:
+        readImage.createImgList(fileImgList, testSize)
+        testList = createWeightsAndBiases.returnFileData(testFileImgList)
+
+    try:
+        costListData = createWeightsAndBiases.returnFileData(costList)
+        
+    except FileNotFoundError:
+        costSum = 0
+        for i, _ in enumerate(testList):
+            costSum += calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
+        avgCost = costSum / len(testList)
+
+        costListData = []
+        costListData.append(avgCost)
+        createWeightsAndBiases.createFile(costList, costListData)
 
     # Loop through the training list
     for progress, i in enumerate(trainingListOrder):
@@ -47,8 +72,17 @@ def main(weightsAndBiases):
         # Write the changes to the weights and biases to the file
         createWeightsAndBiases.alterFileData(fileWeightsAndBiases, weightsAndBiases)
         # Give a progress update every 100 iterations
-        if (progress + 1) % 100 == 0:
+        if (progress + 1) % 1000 == 0:
             print(progress + 1)
+        
+    costSum = 0
+    for i, _ in enumerate(testList):
+        costSum += calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
+    avgCost = costSum / len(testList)
+
+    costListData = createWeightsAndBiases.returnFileData(costList)
+    costListData.append(avgCost)
+    createWeightsAndBiases.alterFileData(costList, costListData)
 
 def calcGradient(weightsAndBiases, number, imgPixelList):
     # Run the neural network and retreve the value of the neurons
@@ -132,6 +166,8 @@ def calcGradient(weightsAndBiases, number, imgPixelList):
     return weightGradient, biasGradient
 
 def calcDesiredOutput(outputNumber, number):
+    outputNumber = int(outputNumber)
+    number = int(number)
     if outputNumber == number:
         return 1
     else:
@@ -150,4 +186,24 @@ def applyGradient(weightGradient, biasGradient, weightsAndBiases, learningRate):
                 weightsAndBiases[layerKey][neuronKey]["weights"][i] = mathFunctions.changeWeightOrBias(weight, learningRate, weightGradient[len(weightGradient) - layerKey][neuronKey][i])
     return weightsAndBiases
 
-main(weightsAndBiases)
+def calcCost(weightsAndBiases, number, imgPixelList):
+    # Run the neural network and retreve the value of the neurons
+    valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
+    cost = 0
+
+    for outputKey, output in valueNeurons[len(valueNeurons) - 1].items():
+        desiredOutput = calcDesiredOutput(outputKey, number)
+        cost += mathFunctions.calcCost(output, desiredOutput)
+    
+    return cost
+            
+
+for _ in range(1):
+    print("#" * 20)
+    main(weightsAndBiases)
+
+costListData = createWeightsAndBiases.returnFileData(costList)
+ypoints = np.array(costListData)
+
+plt.plot(ypoints)
+plt.show()

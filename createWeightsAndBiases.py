@@ -11,8 +11,8 @@ hiddenLayers = {
     3: 10
 }
 
-#file = "weightsAndBiases.pkl"
-file = "imgList.pkl"
+file = "weightsAndBiases.pkl"
+#file = "imgList.pkl"
 weightsAndBiases = {}
 
 # Create a nested dictionarie with the weights and biases
@@ -66,13 +66,25 @@ def alterFileData(file, newData):
     if os.path.isfile(file) == True:
         # open a file
         with open(file, 'wb') as f:
-            # serialize the weights and biases to the file
+            # serialize the data to the file
             pickle.dump(newData, f)
+            f.close()
+        return True
+    else:
+        return False
+    
+def createFile(file, data):
+    if os.path.isfile(file) == False:
+        # open a file
+        with open(file, 'wb') as f:
+            # serialize the data to the file
+            pickle.dump(data, f)
             f.close()
         return True
     else:
         return False
 
 
-#print(returnFileData(file))    
+
+print(returnFileData(file))  
 #print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))

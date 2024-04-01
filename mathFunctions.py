@@ -16,6 +16,9 @@ def XavierWeightInitialization(n):
     }
     return weightRange
 
+def calcCost(output, desiredOutput):
+    return (output - desiredOutput) ** 2
+
 def calcCostDerivative(output, desiredOutput):
     return 2 * (output - desiredOutput)
 
