@@ -2,6 +2,7 @@
 from PIL import Image
 import os
 import pickle
+import createWeightsAndBiases
 
 # Create a list whith the grayscale of each pixel of an image
 def imgPxList(path):
@@ -30,27 +31,30 @@ def calcGrayscale(i):
     return i/255
 
 def createImgList(path, testSize):
+    settings = createWeightsAndBiases.returnJsonFileData()
     testSize = int(1 / testSize)
-    testFileImgList = "test" + str(path.capitalize())
+    testFileImgList = settings["testImgListFile"]
+    directory = settings["trainingSetDirectory"]
     if os.path.isfile(path) == False or os.path.isfile(testFileImgList) == False:
         t = 0
         i = 0
         j = 0
         imgList = {}
         testImgList = {}
-        for directory in os.listdir("trainingSet"):
+        for folder in os.listdir(directory):
+            directory = directory + "/"
 
-            for file in os.listdir("trainingSet/" + directory):
+            for file in os.listdir(directory + folder):
                 if t % testSize != 0:
                     imgList[i] = {}
-                    filePath = "trainingSet/" + directory + "/" + file
-                    imgList[i]["number"] = directory
+                    filePath = directory + folder + "/" + file
+                    imgList[i]["number"] = folder
                     imgList[i]["pixelList"] = imgPxList(filePath)
                     i += 1
                 elif t % testSize == 0:
                     testImgList[j] = {}
-                    filePath = "trainingSet/" + directory + "/" + file
-                    testImgList[j]["number"] = directory
+                    filePath = directory + folder + "/" + file
+                    testImgList[j]["number"] = folder
                     testImgList[j]["pixelList"] = imgPxList(filePath)
                     j += 1
 
@@ -66,54 +70,4 @@ def createImgList(path, testSize):
         with open(testFileImgList, 'wb') as f:
             # serialize the pixel list to the file
             pickle.dump(testImgList, f)
-            f.close()
-
-def createTinyImgList(path):
-    if os.path.isfile(path) == False:
-        imgList = {
-            0: {
-                "number": 0,
-                "pixelList": [0, 0]
-            },
-            1: {
-                "number": 1,
-                "pixelList": [1, 0]
-            },
-            2: {
-                "number": 0,
-                "pixelList": [0, 0]
-            },
-            3: {
-                "number": 0,
-                "pixelList": [1, 1]
-            },
-            4: {
-                "number": 1,
-                "pixelList": [0, 1]
-            },
-            5: {
-                "number": 1,
-                "pixelList": [0, 1]
-            },
-            6: {
-                "number": 0,
-                "pixelList": [0, 0]
-            },
-            7: {
-                "number": 0,
-                "pixelList": [1, 1]
-            },
-            8: {
-                "number": 1,
-                "pixelList": [1, 0]
-            },
-            9: {
-                "number": 1,
-                "pixelList": [1, 0]
-            }
-        }
-        print(imgList)
-        with open(path, 'wb') as f:
-            # serialize the pixel list to the file
-            pickle.dump(imgList, f)
             f.close()

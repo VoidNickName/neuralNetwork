@@ -2,21 +2,11 @@ import pickle
 import os
 import random
 import mathFunctions
-
-inputLayer = 784
-hiddenLayers = {
-    1: 16,
-    2: 16,
-    # Output layer
-    3: 10
-}
-
-file = "weightsAndBiases.pkl"
-#file = "imgList.pkl"
-weightsAndBiases = {}
+import json
 
 # Create a nested dictionarie with the weights and biases
 def setWeightsAndBiases(inputLayer, hiddenLayers):
+    weightsAndBiases = {}
         # Loop through the layers in the neuralnetwork
     for layerKey, neurons in hiddenLayers.items():
         weightsAndBiases[layerKey] = {}
@@ -60,7 +50,9 @@ def returnFileData(file):
     with open(file, 'rb') as f:
         # deserialize using load()
         data = pickle.load(f)
+        f.close()
         return data
+    
     
 def alterFileData(file, newData):
     if os.path.isfile(file) == True:
@@ -83,8 +75,10 @@ def createFile(file, data):
         return True
     else:
         return False
-
-
-
-print(returnFileData(file))  
-#print(createWeightsAndBiasesFile(inputLayer, hiddenLayers, file))
+    
+def returnJsonFileData():
+    with open("settings.json", 'rb') as f:
+        # deserialize using load()
+        data = json.load(f)
+        f.close()
+        return data

@@ -1,0 +1,22 @@
+{
+    "hiddenLayers": {
+        "1": 16,
+        "2": 16,
+        "3": 10
+    },
+
+    "weightsAndBiasesFile": "weightsAndBiases.pkl",
+    "imgListFile": "imgList.pkl",
+    "testImgListFile": "testImgList.pkl",
+    "costList": "costList.pkl",
+
+    "canvasHight": 28,
+    "canvasWidth": 28,
+    "pixelSize": 15,
+
+    "imagePath": "testSet\\img_1.jpg",
+    "trainingSetDirectory": "trainingSet",
+
+    "learningRate": 0.1,
+    "testSize": 0.20
+}

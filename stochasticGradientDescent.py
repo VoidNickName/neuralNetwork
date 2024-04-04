@@ -6,21 +6,21 @@ from runNeuralNetwork import runNeuralNetwork
 import matplotlib.pyplot as plt
 import numpy as np
 
-fileWeightsAndBiases = "weightsAndBiases.pkl"
-fileImgList = "imgList.pkl"
-testFileImgList = "test" + str(fileImgList.capitalize())
-costList = "costList.pkl"
+settings = createWeightsAndBiases.returnJsonFileData()
+canvasHight = settings["canvasHight"]
+canvasWidth = settings["canvasWidth"]
+fileWeightsAndBiases = settings["weightsAndBiasesFile"]
+fileImgList = settings["imgListFile"]
+testFileImgList = settings["testImgListFile"]
+costList = settings["costList"]
 
-learningRate = 0.1
-testSize = 0.20
+learningRate = settings["learningRate"]
+testSize = settings["testSize"]
 
-inputLayer = 784
-hiddenLayers = {
-    1: 16,
-    2: 16,
-    # Output layer
-    3: 10
-}
+inputLayer = canvasWidth * canvasHight
+hiddenLayers = {}
+for layerKey, layer in settings["hiddenLayers"].items():
+    hiddenLayers[int(layerKey)] = layer
 
 # Retreve weights and biases from file
 # When the file does not exist create a new one
