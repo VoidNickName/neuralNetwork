@@ -8,15 +8,16 @@
     "weightsAndBiasesFile": "weightsAndBiases.pkl",
     "imgListFile": "imgList.pkl",
     "testImgListFile": "testImgList.pkl",
-    "costList": "costList.pkl",
+    "costListFile": "costList.pkl",
 
     "canvasHight": 28,
     "canvasWidth": 28,
     "pixelSize": 15,
 
-    "imagePath": "testSet\\img_1.jpg",
+    "imagePath": "testSet/img_1.jpg",
     "trainingSetDirectory": "trainingSet",
 
     "learningRate": 0.1,
-    "testSize": 0.20
+    "testSize": 0.20,
+    "minCostDifference": 0.01
 }

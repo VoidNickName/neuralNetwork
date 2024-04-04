@@ -6,31 +6,35 @@ from runNeuralNetwork import runNeuralNetwork
 import matplotlib.pyplot as plt
 import numpy as np
 
-settings = createWeightsAndBiases.returnJsonFileData()
-canvasHight = settings["canvasHight"]
-canvasWidth = settings["canvasWidth"]
-fileWeightsAndBiases = settings["weightsAndBiasesFile"]
-fileImgList = settings["imgListFile"]
-testFileImgList = settings["testImgListFile"]
-costList = settings["costList"]
+def main():
+    settings = createWeightsAndBiases.returnJsonFileData()
+    fileWeightsAndBiases = settings["weightsAndBiasesFile"]
+    fileImgList = settings["imgListFile"]
+    testFileImgList = settings["testImgListFile"]
+    costListFile = settings["costListFile"]
 
-learningRate = settings["learningRate"]
-testSize = settings["testSize"]
+    learningRate = settings["learningRate"]
+    testSize = settings["testSize"]
+    minCostDifference = settings["minCostDifference"]
 
-inputLayer = canvasWidth * canvasHight
-hiddenLayers = {}
-for layerKey, layer in settings["hiddenLayers"].items():
-    hiddenLayers[int(layerKey)] = layer
+    try:
+        costListData = createWeightsAndBiases.returnFileData(costListFile)
+    except FileNotFoundError:
+        costListData = {}
+        costListData["costList"] = {}
 
-# Retreve weights and biases from file
-# When the file does not exist create a new one
-try:
-    weightsAndBiases = createWeightsAndBiases.returnFileData(fileWeightsAndBiases)
-except FileNotFoundError:
-    createWeightsAndBiases.createWeightsAndBiasesFile(inputLayer, hiddenLayers, fileWeightsAndBiases)
-    weightsAndBiases = createWeightsAndBiases.returnFileData(fileWeightsAndBiases)
+    while len(costListData["costList"]) < 2 or costListData["costList"][-2] - costListData["costList"][-1] >= minCostDifference:
+        print("#" * 20)
+        train(fileWeightsAndBiases, fileImgList, testSize, testFileImgList, costListFile, learningRate)
+        costListData = createWeightsAndBiases.returnFileData(costListFile)
 
-def main(weightsAndBiases):
+    showGraph(costListFile)
+
+def train(fileWeightsAndBiases, fileImgList, testSize, testFileImgList, costListFile, learningRate):
+
+    # Get weights and biases
+    weightsAndBiases = createWeightsAndBiases.getWeightsAndBiases()
+
     # Retreve traingList from file
     # When the file does not exist create a new one
     try:
@@ -51,17 +55,25 @@ def main(weightsAndBiases):
         testList = createWeightsAndBiases.returnFileData(testFileImgList)
 
     try:
-        costListData = createWeightsAndBiases.returnFileData(costList)
+        costListData = createWeightsAndBiases.returnFileData(costListFile)
         
     except FileNotFoundError:
+        totalCorrect = 0
         costSum = 0
         for i, _ in enumerate(testList):
-            costSum += calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
-        avgCost = costSum / len(testList)
+            cost, correct = calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
+            costSum += cost
+            totalCorrect += correct
 
-        costListData = []
-        costListData.append(avgCost)
-        createWeightsAndBiases.createFile(costList, costListData)
+        avgCost = costSum / len(testList)
+        persentageCorrect = totalCorrect / len(testList) * 100
+
+        costListData = {}
+        costListData["costList"] = []
+        costListData["persentageCorrect"] = []
+        costListData["costList"].append(avgCost)
+        costListData["persentageCorrect"].append(persentageCorrect)
+        createWeightsAndBiases.createFile(costListFile, costListData)
 
     # Loop through the training list
     for progress, i in enumerate(trainingListOrder):
@@ -74,15 +86,8 @@ def main(weightsAndBiases):
         # Give a progress update every 100 iterations
         if (progress + 1) % 1000 == 0:
             print(progress + 1)
-        
-    costSum = 0
-    for i, _ in enumerate(testList):
-        costSum += calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
-    avgCost = costSum / len(testList)
 
-    costListData = createWeightsAndBiases.returnFileData(costList)
-    costListData.append(avgCost)
-    createWeightsAndBiases.alterFileData(costList, costListData)
+    calcAvgCost(testList, costListFile, weightsAndBiases)
 
 def calcGradient(weightsAndBiases, number, imgPixelList):
     # Run the neural network and retreve the value of the neurons
@@ -187,6 +192,7 @@ def applyGradient(weightGradient, biasGradient, weightsAndBiases, learningRate):
     return weightsAndBiases
 
 def calcCost(weightsAndBiases, number, imgPixelList):
+    number = int(number)
     # Run the neural network and retreve the value of the neurons
     valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
     cost = 0
@@ -195,15 +201,44 @@ def calcCost(weightsAndBiases, number, imgPixelList):
         desiredOutput = calcDesiredOutput(outputKey, number)
         cost += mathFunctions.calcCost(output, desiredOutput)
     
-    return cost
-            
+    output = valueNeurons[len(valueNeurons) -1]
+    Keymax = max(zip(output.values(), output.keys()))[1]
+    if number == Keymax:
+        return cost, 1
+    else:
+        return cost, 0
 
-for _ in range(1):
-    print("#" * 20)
-    main(weightsAndBiases)
+def showGraph(costListFile):
+    costListData = createWeightsAndBiases.returnFileData(costListFile)
+    
+    costList = costListData["costList"]
+    ypoints = np.array(costList)
+    plt.subplot(1, 2, 1)
+    plt.plot(ypoints, marker = 'o')
+    plt.title("Cost")
+    plt.xlabel("Iterations")
 
-costListData = createWeightsAndBiases.returnFileData(costList)
-ypoints = np.array(costListData)
+    persentageCorrect = costListData["persentageCorrect"]
+    ypoints = np.array(persentageCorrect)
+    plt.subplot(1, 2, 2)
+    plt.plot(ypoints, marker = 'o')
+    plt.title("Persentage Correct")
+    plt.xlabel("Iterations")
 
-plt.plot(ypoints)
-plt.show()
+    plt.show()
+
+def calcAvgCost(testList, costListFile, weightsAndBiases):
+    totalCorrect = 0
+    costSum = 0
+    for i, _ in enumerate(testList):
+        cost, correct = calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
+        costSum += cost
+        totalCorrect += correct
+
+    avgCost = costSum / len(testList)
+    persentageCorrect = totalCorrect / len(testList) * 100
+
+    costListData = createWeightsAndBiases.returnFileData(costListFile)
+    costListData["costList"].append(avgCost)
+    costListData["persentageCorrect"].append(persentageCorrect)
+    createWeightsAndBiases.alterFileData(costListFile, costListData)

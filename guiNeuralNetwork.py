@@ -13,7 +13,6 @@ def main():
     canvasHight = settings["canvasHight"]
     canvasWidth = settings["canvasWidth"]
     pixelSize = settings["pixelSize"]
-    file = settings["weightsAndBiasesFile"]
 
     global canvasPixel
     canvasPixel = {}
@@ -40,7 +39,7 @@ def main():
     btn1 = Button(root, text="Reset canvas", command=lambda: reset(canvasWidth, canvasHight, canvas, canvasPixel))
     btn1.grid(column=0, row=3)
 
-    btn1 = Button(root, text="Run Neural Network", command=lambda: run(canvasWidth, canvasHight, canvas, canvasPixel, file))
+    btn1 = Button(root, text="Run Neural Network", command=lambda: run(canvasWidth, canvasHight, canvas, canvasPixel))
     btn1.grid(column=0, row=4, pady=pixelSize)
 
     # Execute Tkinter
@@ -62,9 +61,9 @@ def reset(canvasWidth, canvasHight, canvas, canvasPixel):
         for y in range(canvasHight):
             canvas.itemconfig(canvasPixel[x][y], fill="black")
 
-def run(canvasWidth, canvasHight, canvas, canvasPixel, file):
-    # Retreve weights and biases from file
-    weightsAndBiases = createWeightsAndBiases.returnFileData(file)
+def run(canvasWidth, canvasHight, canvas, canvasPixel):
+    # Get weights and biases
+    weightsAndBiases = createWeightsAndBiases.getWeightsAndBiases()
 
     pixelColor = []
     for x in range(canvasWidth):
@@ -83,5 +82,3 @@ def run(canvasWidth, canvasHight, canvas, canvasPixel, file):
     Keymax = max(zip(output.values(), output.keys()))[1]
     tkinter.messagebox.showinfo("Output", Keymax) 
     print(Keymax)
-
-main()

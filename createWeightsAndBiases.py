@@ -82,3 +82,24 @@ def returnJsonFileData():
         data = json.load(f)
         f.close()
         return data
+    
+def getWeightsAndBiases():
+    settings = returnJsonFileData()
+    canvasHight = settings["canvasHight"]
+    canvasWidth = settings["canvasWidth"]
+    file = settings["weightsAndBiasesFile"]
+
+    inputLayer = canvasWidth * canvasHight
+    hiddenLayers = {}
+    for layerKey, layer in settings["hiddenLayers"].items():
+        hiddenLayers[int(layerKey)] = layer
+
+    # Retreve weights and biases from file
+    # When the file does not exist create a new one
+    try:
+        weightsAndBiases = returnFileData(file)
+    except FileNotFoundError:
+        createWeightsAndBiasesFile(inputLayer, hiddenLayers, file)
+        weightsAndBiases = returnFileData(file)
+    
+    return weightsAndBiases

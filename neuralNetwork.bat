@@ -1,1 +1,1 @@
-start pythonw.exe guiNeuralNetwork.py
+start pythonw.exe neuralNetwork.py gui
