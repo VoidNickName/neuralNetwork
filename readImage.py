@@ -35,26 +35,34 @@ def createImgList(path, testSize):
     testSize = int(1 / testSize)
     testFileImgList = settings["testImgListFile"]
     directory = settings["trainingSetDirectory"]
+
+    # Checks if the image list files already exist
     if os.path.isfile(path) == False or os.path.isfile(testFileImgList) == False:
         t = 0
         i = 0
         j = 0
         imgList = {}
         testImgList = {}
+        # Loop through the folders in the image traininglist directory
         for folder in os.listdir(directory):
             directory = directory + "/"
-
+            # Loop through the images in traininglist folder
             for file in os.listdir(directory + folder):
+                # The images are getting devided in two different files
+                # A training list to train the neural network
                 if t % testSize != 0:
                     imgList[i] = {}
                     filePath = directory + folder + "/" + file
                     imgList[i]["number"] = folder
+                    # Retreve the pixel list from the image
                     imgList[i]["pixelList"] = imgPxList(filePath)
                     i += 1
+                # And a test list to monitor the progress of the training
                 elif t % testSize == 0:
                     testImgList[j] = {}
                     filePath = directory + folder + "/" + file
                     testImgList[j]["number"] = folder
+                    # Retreve the pixel list from the image
                     testImgList[j]["pixelList"] = imgPxList(filePath)
                     j += 1
 

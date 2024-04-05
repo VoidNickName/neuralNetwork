@@ -42,8 +42,10 @@ def main():
                 # Get list of pixel values from image
                 imgPixelList = readImage.imgPxList(imagePath)
 
+            # Retreve or create weights and biases
             weightsAndBiases = createWeightsAndBiases.getWeightsAndBiases()
 
+            # Run the neural network
             valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
 
             output = (valueNeurons[len(valueNeurons) - 1])

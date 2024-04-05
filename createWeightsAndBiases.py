@@ -89,8 +89,13 @@ def getWeightsAndBiases():
     canvasWidth = settings["canvasWidth"]
     file = settings["weightsAndBiasesFile"]
 
+    # Calculate the size of the inputlayer bases on the image size
     inputLayer = canvasWidth * canvasHight
     hiddenLayers = {}
+    
+    # The index of JSON can only be a string,
+    # but in order to loop through the files
+    # it has te be converted to a integer
     for layerKey, layer in settings["hiddenLayers"].items():
         hiddenLayers[int(layerKey)] = layer
 

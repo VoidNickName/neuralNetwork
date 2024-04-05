@@ -8,6 +8,7 @@ def runNeuralNetwork(weightsAndBiases, imgPixelList):
     valueNeurons = {}
     valueNeurons[0] = {}
 
+    # This is a list and needs to be a dictonary
     for i, pixelValue in enumerate(imgPixelList):
         valueNeurons[0][i] = pixelValue
         

@@ -17,17 +17,25 @@ def main():
     testSize = settings["testSize"]
     minCostDifference = settings["minCostDifference"]
 
+    # Try to retreve the cost list
+    # If that is not posible create an empty costlist
     try:
         costListData = createWeightsAndBiases.returnFileData(costListFile)
     except FileNotFoundError:
         costListData = {}
         costListData["costList"] = {}
 
+    # The neural network keeps training until it has trained at least 2 times
+    # and the difference in cost betwteen the last two training rounds smaller or equel is to the minimal cost difference
     while len(costListData["costList"]) < 2 or costListData["costList"][-2] - costListData["costList"][-1] >= minCostDifference:
         print("#" * 20)
+        # Train the neural network
         train(fileWeightsAndBiases, fileImgList, testSize, testFileImgList, costListFile, learningRate)
+        # Update the cost list data
         costListData = createWeightsAndBiases.returnFileData(costListFile)
 
+    # Show the graph of the cost and against the iterations
+    # And the persentages correct against the iterations
     showGraph(costListFile)
 
 def train(fileWeightsAndBiases, fileImgList, testSize, testFileImgList, costListFile, learningRate):
@@ -48,26 +56,34 @@ def train(fileWeightsAndBiases, fileImgList, testSize, testFileImgList, costList
     # Shuffle the training list
     random.shuffle(trainingListOrder)
 
+    # Try to retreve the test list
+    # Otherwise create a new one
     try:
         testList = createWeightsAndBiases.returnFileData(testFileImgList)
     except FileNotFoundError:
         readImage.createImgList(fileImgList, testSize)
         testList = createWeightsAndBiases.returnFileData(testFileImgList)
 
+    # Try to open the cost list
     try:
         costListData = createWeightsAndBiases.returnFileData(costListFile)
-        
+    
+    # When that does not work create a new cost list file
     except FileNotFoundError:
         totalCorrect = 0
         costSum = 0
+        # Calculate the cost for each image in the test list and if it was correct or not
         for i, _ in enumerate(testList):
             cost, correct = calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
             costSum += cost
             totalCorrect += correct
 
+        # Calculate the average of the costs of the test list
         avgCost = costSum / len(testList)
+        # Calculate the persentage correct
         persentageCorrect = totalCorrect / len(testList) * 100
 
+        # Create new cost list file
         costListData = {}
         costListData["costList"] = []
         costListData["persentageCorrect"] = []
@@ -170,6 +186,7 @@ def calcGradient(weightsAndBiases, number, imgPixelList):
 
     return weightGradient, biasGradient
 
+# Returns the the desired output
 def calcDesiredOutput(outputNumber, number):
     outputNumber = int(outputNumber)
     number = int(number)
@@ -197,12 +214,15 @@ def calcCost(weightsAndBiases, number, imgPixelList):
     valueNeurons = runNeuralNetwork(weightsAndBiases, imgPixelList)
     cost = 0
 
+    # Calculates the cost of the network for the current image
     for outputKey, output in valueNeurons[len(valueNeurons) - 1].items():
         desiredOutput = calcDesiredOutput(outputKey, number)
         cost += mathFunctions.calcCost(output, desiredOutput)
     
     output = valueNeurons[len(valueNeurons) -1]
+    # Gets the highest activated neuron
     Keymax = max(zip(output.values(), output.keys()))[1]
+    # Check if the neural network gave the right anwser
     if number == Keymax:
         return cost, 1
     else:
@@ -211,6 +231,7 @@ def calcCost(weightsAndBiases, number, imgPixelList):
 def showGraph(costListFile):
     costListData = createWeightsAndBiases.returnFileData(costListFile)
     
+    # Makes the graph of the costs vs the iteration
     costList = costListData["costList"]
     ypoints = np.array(costList)
     plt.subplot(1, 2, 1)
@@ -218,6 +239,7 @@ def showGraph(costListFile):
     plt.title("Cost")
     plt.xlabel("Iterations")
 
+    # Makes the graph of the persentage correct vs the iteration
     persentageCorrect = costListData["persentageCorrect"]
     ypoints = np.array(persentageCorrect)
     plt.subplot(1, 2, 2)
@@ -225,19 +247,25 @@ def showGraph(costListFile):
     plt.title("Persentage Correct")
     plt.xlabel("Iterations")
 
+    # Shows the graphs
     plt.show()
 
 def calcAvgCost(testList, costListFile, weightsAndBiases):
     totalCorrect = 0
     costSum = 0
+
+    # Loop through each image in the test list and calculate it's cost
     for i, _ in enumerate(testList):
         cost, correct = calcCost(weightsAndBiases, testList[i]["number"], testList[i]["pixelList"])
         costSum += cost
         totalCorrect += correct
 
+    # Calculate the average cost of the neural network
     avgCost = costSum / len(testList)
+    # Calculate the persentage correct of the neural network
     persentageCorrect = totalCorrect / len(testList) * 100
 
+    # Adds the newly calculated average cost and persentage correct to the cost list file
     costListData = createWeightsAndBiases.returnFileData(costListFile)
     costListData["costList"].append(avgCost)
     costListData["persentageCorrect"].append(persentageCorrect)
