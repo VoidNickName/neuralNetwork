@@ -80,7 +80,7 @@ def help():
     print("  |  This command has a second optional command.                                      |")
     print("  |  If you want to run another image through the neural network                      |")
     print("  |  then the one specified in the settings,                                          |")
-    print("  |  you can run te following command:                                                 |")
+    print("  |  you can run te following command:                                                |")
     print("  |        > python neuralNetwork.py run <filepath>                                   |")
     print("  |                                                                                   |")
     print(" ======================================================================================")
